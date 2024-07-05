@@ -96,6 +96,8 @@ function drawRectInCanvas()
 function mouseUp(e) {
   dragTL = dragTR = dragBL = dragBR = false;
   dragWholeRect = false;
+  canvas.style.cursor = 'default'; 
+
 }
 
 //mousedown connected functions -- START
@@ -132,6 +134,8 @@ function mouseDown(e) {
       dragWholeRect=true;
       startX = mouseX;
       startY = mouseY;
+    canvas.style.cursor = 'grabbing'; 
+
   }
   // 1. top left
   else if (checkCloseEnough(mouseX, rect.left) && checkCloseEnough(mouseY, rect.top)) {
@@ -152,6 +156,44 @@ function mouseDown(e) {
   // (5.) none of them
   else {
       // handle not resizing
+  }
+  drawRectInCanvas();
+}
+
+
+function mouseMoveCursors(e) {
+  var pos = getMousePos(this,e);
+  mouseX = pos.x;
+  mouseY = pos.y;
+  // 0. inside movable rectangle
+  if (checkInRect(mouseX, mouseY, rect)){
+    if(!dragWholeRect)
+    canvas.style.cursor = 'move'; 
+  }
+  // 1. top left
+  else if (checkCloseEnough(mouseX, rect.left) && checkCloseEnough(mouseY, rect.top)) {
+      
+    canvas.style.cursor = 'nw-resize'; 
+  }
+  // 2. top right
+  else if (checkCloseEnough(mouseX, rect.left + rect.width) && checkCloseEnough(mouseY, rect.top)) {
+      
+    canvas.style.cursor = 'ne-resize'; 
+  }
+  // 3. bottom left
+  else if (checkCloseEnough(mouseX, rect.left) && checkCloseEnough(mouseY, rect.top + rect.height)) {
+    canvas.style.cursor = 'sw-resize'; 
+    
+  }
+  // 4. bottom right
+  else if (checkCloseEnough(mouseX, rect.left + rect.width) && checkCloseEnough(mouseY, rect.top + rect.height)) {
+    canvas.style.cursor = 'se-resize'; 
+      
+  }
+  // (5.) none of them
+  else {
+      // handle not resizing
+      canvas.style.cursor = 'default'; 
   }
   drawRectInCanvas();
 }
@@ -280,6 +322,7 @@ function initRect(){
 function init(){
   canvas.addEventListener('mousedown', mouseDown, false);
   canvas.addEventListener('mouseup', mouseUp, false);
+  canvas.addEventListener('mousemove', mouseMoveCursors, false);
   canvas.addEventListener('mousemove', mouseMove, false);
   canvas.addEventListener('touchstart', mouseDown);
   canvas.addEventListener('touchmove', mouseMove);
