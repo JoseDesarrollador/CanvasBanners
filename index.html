@@ -177,37 +177,57 @@ function mouseMove(e) {
   } else if (dragTL) {
       e.preventDefault();
       e.stopPropagation();
-      var newSide = (Math.abs(rect.left+rect.width - mouseX)+Math.abs(rect.height + rect.top - mouseY))/2;
-      if (newSide>40){
-        rect.left = rect.left + rect.width - newSide;
-        rect.top = rect.height + rect.top - newSide;
-        rect.width = rect.height = newSide;
+      var newSide_H = Math.abs(rect.height + rect.top - mouseY);
+      var newSide_W = Math.abs(rect.left+rect.width - mouseX);
+      if (newSide_H>40){
+        rect.top = rect.height + rect.top - newSide_H;
+        rect.height = newSide_H;
+      }
+      if (newSide_W>40){
+        rect.left = rect.left + rect.width - newSide_W;
+        rect.width = newSide_W;
       }
   } else if (dragTR) {
       e.preventDefault();
       e.stopPropagation();
-      var newSide = (Math.abs(mouseX-rect.left)+Math.abs(rect.height + rect.top - mouseY))/2;
+      var newSide = Math.abs(rect.height + rect.top - mouseY);
+      var newSide_W = Math.abs( mouseX - rect.left);
       if (newSide>40){
           rect.top = rect.height + rect.top - newSide;
-          rect.width = rect.height = newSide;
+          rect.height = newSide;
       }
+     if(newSide_W > 40)
+     {
+       rect.width = newSide_W;
+     }      
   } else if (dragBL) {
       e.preventDefault();
       e.stopPropagation();
-      var newSide = (Math.abs(rect.left+rect.width - mouseX)+Math.abs(rect.top - mouseY))/2;
+      var newSide = (Math.abs(rect.left+rect.width - mouseX));
+      var newSide_H = (Math.abs(mouseY - rect.top));
       if (newSide>40)
       {
         rect.left = rect.left + rect.width - newSide;
-        rect.width = rect.height = newSide;
+        rect.width  = newSide;
+      }
+      if(newSide_H > 40)
+      {
+        rect.height = newSide_H;
       }
   } else if (dragBR) {
       e.preventDefault();
       e.stopPropagation();
-      var newSide = (Math.abs(rect.left - mouseX)+Math.abs(rect.top - mouseY))/2;
+      var newSide = (Math.abs(rect.left - mouseX));
+      var newSide_H = (Math.abs(mouseY - rect.top));
       if (newSide>40)
       {
-       rect.width = rect.height = newSide;
-      }      
+       rect.width = newSide;
+      }    
+      
+      if(newSide_H > 40)
+      {
+        rect.height = newSide_H;
+      }
   }
   drawRectInCanvas();
 }
