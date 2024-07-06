@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Posicionar Divs sobre Imagen</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        .image-container {
+            position: relative;
+            width: 100%;
+        }
+        .image-container img {
+            width: 100%;
+            display: block;
+        }
+        .overlay-div {
+            position: absolute;
+            border: 1px solid red; /* Solo para visualización */
+        }
+    </style>
+</head>
+<body>
+    <div class="image-container">
+        <img src="img/como-hacer-un-banner.png" alt="Imagen de ejemplo">
+    </div>
+
+    <script>
+        const positions = [
+            { top: 165, left: 590, right: null, bottom: null },
+            { top: 150, left: 250, right: null, bottom: null },
+            { top: 200, left: 300, right: null, bottom: null },
+            { top: 250, left: 350, right: null, bottom: null }
+        ];
+
+        const imageContainer = document.querySelector('.image-container');
+        const image = imageContainer.querySelector('img');
+
+        // Asegúrate de que la imagen esté cargada antes de obtener sus dimensiones
+        image.onload = function() {
+            const imgWidth = image.width;
+            const imgHeight = image.height;
+
+            positions.forEach(pos => {
+                const div = document.createElement('div');
+                div.classList.add('overlay-div');
+                
+                if (pos.top !== null) div.style.top = (pos.top / imgHeight) * 100 + '%';
+                if (pos.left !== null) div.style.left = (pos.left / imgWidth) * 100 + '%';
+                if (pos.right !== null) div.style.right = (pos.right / imgWidth) * 100 + '%';
+                if (pos.bottom !== null) div.style.bottom = (pos.bottom / imgHeight) * 100 + '%';
+                
+                div.style.width = '40px';  // Ancho de ejemplo
+                div.style.height = '40px'; // Alto de ejemplo
+                
+                imageContainer.appendChild(div);
+            });
+        };
+    </script>
+</body>
+</html>

@@ -18,6 +18,10 @@
                 <label>right</label><input id="thb_right">
                 <label>bottom</label><input id="thb_bottom">
             </div>
+            <div>
+              <button>Agregar seleción</button>
+              <a href="pocisionamiento.html">Posicionamiento</a>
+            </div>
          </div>
          <script>
             var image = document.getElementById('full-image');
@@ -29,12 +33,14 @@ var h_th_top = document.getElementById('thb_top')
 var h_th_right = document.getElementById('thb_right')
 var h_th_bottom = document.getElementById('thb_bottom')
 
-var handleRadius = 10
+var handleRadius = 12
 
 var dragTL = dragBL = dragTR = dragBR = false;
 var dragWholeRect = false;
 
 var rect={}
+var rectsArray = [];
+rectsArray.push(rect);
 var current_canvas_rect={}
 
 var mouseX, mouseY
@@ -63,7 +69,7 @@ function updateHiddenInputs(){
 
 function drawCircle(x, y, radius) {
   var ctx = canvas.getContext("2d");
-  ctx.fillStyle = "red";
+  ctx.fillStyle = "lightgreen";
   ctx.beginPath();
   ctx.arc(x, y, radius, 0, 2 * Math.PI);
   ctx.fill();
@@ -126,6 +132,7 @@ function getMousePos(canvas, evt) {
 }
 
 function mouseDown(e) {
+  console.log(rect);
   var pos = getMousePos(this,e);
   mouseX = pos.x;
   mouseY = pos.y;
