@@ -17,6 +17,8 @@
                 <label>top</label><input id="thb_top">
                 <label>right</label><input id="thb_right">
                 <label>bottom</label><input id="thb_bottom">
+                <label>Width</label><input id="thb_width">
+                <label>height</label><input id="thb_height">
             </div>
             <div>
               <button>Agregar seleción</button>
@@ -32,6 +34,8 @@ var h_th_left = document.getElementById('thb_left')
 var h_th_top = document.getElementById('thb_top')
 var h_th_right = document.getElementById('thb_right')
 var h_th_bottom = document.getElementById('thb_bottom')
+var h_th_width = document.getElementById('thb_width')
+var h_th_height = document.getElementById('thb_height')
 
 var handleRadius = 12
 
@@ -61,10 +65,12 @@ var effective_image_height = 3024;
 function updateHiddenInputs(){
   var inverse_ratio_w =  effective_image_width / canvas.width;
   var inverse_ratio_h = effective_image_height / canvas.height ;
-  h_th_left.value = Math.round(rect.left * inverse_ratio_w)
-  h_th_top.value = Math.round(rect.top * inverse_ratio_h)
+  h_th_left.value = Math.round(rect.left)
+  h_th_top.value = Math.round(rect.top)
   h_th_right.value = Math.round((rect.left + rect.width) * inverse_ratio_w)
   h_th_bottom.value = Math.round((rect.top + rect.height) * inverse_ratio_h)
+  h_th_width.value = rect.width;
+  h_th_height.value = rect.height;
 }
 
 function drawCircle(x, y, radius) {
