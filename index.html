@@ -37,7 +37,7 @@ var h_th_bottom = document.getElementById('thb_bottom')
 var h_th_width = document.getElementById('thb_width')
 var h_th_height = document.getElementById('thb_height')
 
-var handleRadius = 12
+var handleRadius = 5
 
 var dragTL = dragBL = dragTR = dragBR = false;
 var dragWholeRect = false;
@@ -75,10 +75,17 @@ function updateHiddenInputs(){
 
 function drawCircle(x, y, radius) {
   var ctx = canvas.getContext("2d");
-  ctx.fillStyle = "lightgreen";
+
+  // Configura el estilo del borde
+  ctx.strokeStyle = 'black'; // Color del borde
+  ctx.lineWidth = 1; // Ancho del borde
+  ctx.fillStyle = "white";
   ctx.beginPath();
   ctx.arc(x, y, radius, 0, 2 * Math.PI);
   ctx.fill();
+
+  // Dibuja el borde del círculo
+  ctx.stroke();
 }
 
 function drawHandles() {
@@ -94,9 +101,9 @@ function drawRectInCanvas()
   var ctx = canvas.getContext("2d");
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.beginPath();
-  ctx.lineWidth = "6";
+  ctx.lineWidth = "1";
   ctx.fillStyle = "rgba(199, 87, 231, 0.2)";
-  ctx.strokeStyle = "#c757e7";
+  ctx.strokeStyle = "#000000";
   ctx.rect(rect.left, rect.top, rect.width, rect.height);
   ctx.fill();
   ctx.stroke();
