@@ -37,9 +37,10 @@ var h_th_bottom = document.getElementById('thb_bottom')
 var h_th_width = document.getElementById('thb_width')
 var h_th_height = document.getElementById('thb_height')
 
-var handleRadius = 5
+var handleRadius = 20
 
 var dragTL = dragBL = dragTR = dragBR = false;
+var dragTop = dragLeft = dragRight = dragBottom = false;
 var dragWholeRect = false;
 
 var rect={}
@@ -89,10 +90,18 @@ function drawCircle(x, y, radius) {
 }
 
 function drawHandles() {
-  drawCircle(rect.left, rect.top, handleRadius);
-  drawCircle(rect.left + rect.width, rect.top, handleRadius);
-  drawCircle(rect.left + rect.width, rect.top + rect.height, handleRadius);
-  drawCircle(rect.left, rect.top + rect.height, handleRadius);
+  var radio = handleRadius / 3;
+  drawCircle(rect.left, rect.top, radio);
+  drawCircle(rect.left + rect.width, rect.top, radio);
+  drawCircle(rect.left + rect.width, rect.top + rect.height, radio);
+  drawCircle(rect.left, rect.top + rect.height, radio);
+
+  drawCircle(rect.left + (rect.width / 2), rect.top, radio);
+  drawCircle(rect.left + (rect.width / 2), rect.top + rect.height, radio);
+
+  drawCircle(rect.left, rect.top + (rect.height/2), radio);
+  drawCircle(rect.left+rect.width, rect.top + (rect.height/2), radio);
+
 }
 
 
@@ -114,6 +123,7 @@ function drawRectInCanvas()
 
 function mouseUp(e) {
   dragTL = dragTR = dragBL = dragBR = false;
+  dragTop = dragLeft = dragRight = dragBottom = false;
   dragWholeRect = false;
   canvas.style.cursor = 'default'; 
 
@@ -172,8 +182,24 @@ function mouseDown(e) {
   // 4. bottom right
   else if (checkCloseEnough(mouseX, rect.left + rect.width) && checkCloseEnough(mouseY, rect.top + rect.height)) {
       dragBR = true;
+  }  
+  // 5. top
+  else if (checkCloseEnough(mouseX, rect.left + (rect.width/2)) && checkCloseEnough(mouseY, rect.top)) {
+      dragTop = true;
   }
-  // (5.) none of them
+  // 6. right
+  else if (checkCloseEnough(mouseX, rect.left + rect.width) && checkCloseEnough(mouseY, rect.top + (rect.height/2))) {
+      dragRight = true;
+  }
+  // 7. left
+  else if (checkCloseEnough(mouseX, rect.left) && checkCloseEnough(mouseY, rect.top + (rect.height/2))) {
+      dragLeft = true;
+  }
+  // 8. bottom
+  else if (checkCloseEnough(mouseX, rect.left + (rect.width/2)) && checkCloseEnough(mouseY, rect.top + rect.height)) {
+      dragBottom = true;
+  }
+  // (9.) none of them
   else {
       // handle not resizing
   }
@@ -210,7 +236,25 @@ function mouseMoveCursors(e) {
     canvas.style.cursor = 'se-resize'; 
       
   }
-  // (5.) none of them
+  // 5. top
+  else if (checkCloseEnough(mouseX, rect.left + (rect.width/2)) && checkCloseEnough(mouseY, rect.top)) {
+    canvas.style.cursor = 'n-resize'; 
+  }
+  // 6. right
+  else if (checkCloseEnough(mouseX, rect.left + rect.width) && checkCloseEnough(mouseY, rect.top + (rect.height/2))) {
+    canvas.style.cursor = 'e-resize'; 
+
+  }
+  // 7. left
+  else if (checkCloseEnough(mouseX, rect.left) && checkCloseEnough(mouseY, rect.top + (rect.height/2))) {
+    canvas.style.cursor = 'w-resize'; 
+  }
+  // 8. bottom
+  else if (checkCloseEnough(mouseX, rect.left + (rect.width/2)) && checkCloseEnough(mouseY, rect.top + rect.height)) {
+    canvas.style.cursor = 's-resize'; 
+
+  }
+  // (9.) none of them
   else {
       // handle not resizing
       canvas.style.cursor = 'default'; 
@@ -236,54 +280,54 @@ function mouseMove(e) {
       }
       startX = mouseX;
       startY = mouseY;
-  } else if (dragTL) {
+  } else if (dragTL || dragTop) {
       e.preventDefault();
       e.stopPropagation();
       var newSide_H = Math.abs(rect.height + rect.top - mouseY);
       var newSide_W = Math.abs(rect.left+rect.width - mouseX);
-      if (newSide_H>40){
+      if (newSide_H>40 ){
         rect.top = rect.height + rect.top - newSide_H;
         rect.height = newSide_H;
       }
-      if (newSide_W>40){
+      if (newSide_W>40 && !dragTop){
         rect.left = rect.left + rect.width - newSide_W;
         rect.width = newSide_W;
       }
-  } else if (dragTR) {
+  } else if (dragTR || dragRight) {
       e.preventDefault();
       e.stopPropagation();
-      var newSide = Math.abs(rect.height + rect.top - mouseY);
+      var newSide_H = Math.abs(rect.height + rect.top - mouseY);
       var newSide_W = Math.abs( mouseX - rect.left);
-      if (newSide>40){
-          rect.top = rect.height + rect.top - newSide;
-          rect.height = newSide;
+      if (newSide_H>40 && !dragRight){
+          rect.top = rect.height + rect.top - newSide_H;
+          rect.height = newSide_H;
       }
      if(newSide_W > 40)
      {
        rect.width = newSide_W;
      }      
-  } else if (dragBL) {
+  } else if (dragBL || dragLeft) {
       e.preventDefault();
       e.stopPropagation();
-      var newSide = (Math.abs(rect.left+rect.width - mouseX));
+      var newSide_W = (Math.abs(rect.left+rect.width - mouseX));
       var newSide_H = (Math.abs(mouseY - rect.top));
-      if (newSide>40)
+      if (newSide_W>40)
       {
-        rect.left = rect.left + rect.width - newSide;
-        rect.width  = newSide;
+        rect.left = rect.left + rect.width - newSide_W;
+        rect.width  = newSide_W;
       }
-      if(newSide_H > 40)
+      if(newSide_H > 40 && !dragLeft)
       {
         rect.height = newSide_H;
       }
-  } else if (dragBR) {
+  } else if (dragBR || dragBottom) {
       e.preventDefault();
       e.stopPropagation();
-      var newSide = (Math.abs(rect.left - mouseX));
+      var newSide_W = (Math.abs(rect.left - mouseX));
       var newSide_H = (Math.abs(mouseY - rect.top));
-      if (newSide>40)
+      if (newSide_W>40 && !dragBottom)
       {
-       rect.width = newSide;
+       rect.width = newSide_W;
       }    
       
       if(newSide_H > 40)
