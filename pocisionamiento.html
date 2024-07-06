@@ -19,7 +19,9 @@
         }
         .overlay-div {
             position: absolute;
-            border: 1px solid red; /* Solo para visualización */
+            border: 5px solid red; /* Solo para visualización */
+            background-color: rgba(250, 0, 250, .3);
+            cursor: pointer;
         }
     </style>
 </head>
@@ -30,10 +32,10 @@
 
     <script>
         const positions = [
-            { top: 165, left: 590, right: null, bottom: null },
-            { top: 150, left: 250, right: null, bottom: null },
-            { top: 200, left: 300, right: null, bottom: null },
-            { top: 250, left: 350, right: null, bottom: null }
+            { top: 225, left: 475, right: null, bottom: null, width: 238, height: 61 },
+            { top: 120, left: 445, right: null, bottom: null, width: 28, height: 45 },
+            { top: 200, left: 760, right: null, bottom: null, width: 60, height: 60 },
+            { top: 250, left: 350, right: null, bottom: null, width: 70, height: 70 }
         ];
 
         const imageContainer = document.querySelector('.image-container');
@@ -41,21 +43,25 @@
 
         // Asegúrate de que la imagen esté cargada antes de obtener sus dimensiones
         image.onload = function() {
-            const imgWidth = image.width;
-            const imgHeight = image.height;
+            // const imgWidth = image.width;
+            // const imgHeight = image.height;
+
+            var imgWidth = image.naturalWidth;
+            var imgHeight = image.naturalHeight;
 
             positions.forEach(pos => {
                 const div = document.createElement('div');
                 div.classList.add('overlay-div');
-                
+
                 if (pos.top !== null) div.style.top = (pos.top / imgHeight) * 100 + '%';
                 if (pos.left !== null) div.style.left = (pos.left / imgWidth) * 100 + '%';
                 if (pos.right !== null) div.style.right = (pos.right / imgWidth) * 100 + '%';
                 if (pos.bottom !== null) div.style.bottom = (pos.bottom / imgHeight) * 100 + '%';
-                
-                div.style.width = '40px';  // Ancho de ejemplo
-                div.style.height = '40px'; // Alto de ejemplo
-                
+
+                // Ajustar el tamaño de los divs proporcionalmente al tamaño de la imagen
+                if (pos.width !== null) div.style.width = (pos.width / imgWidth) * 100 + '%';
+                if (pos.height !== null) div.style.height = (pos.height / imgHeight) * 100 + '%';
+
                 imageContainer.appendChild(div);
             });
         };
