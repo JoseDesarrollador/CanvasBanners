@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Multiple Circles Event</title>
+    <style>
+        #myCanvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="myCanvas" width="800" height="800"></canvas>
+    <input type="text" id="circleIndex" readonly>
+    <script>
+        // Selecciona el elemento canvas y su contexto
+const canvas = document.getElementById('myCanvas');
+const ctx = canvas.getContext('2d');
+
+// Selecciona el input para mostrar el índice del círculo clickeado
+const input = document.getElementById('circleIndex');
+
+// Define los círculos
+const circles = [
+    { x: 100, y: 100, radius: 50, color: 'blue' },
+    { x: 200, y: 200, radius: 50, color: 'green' },
+    { x: 300, y: 300, radius: 50, color: 'red' },
+    { x: 400, y: 400, radius: 50, color: 'purple' },
+    { x: 500, y: 500, radius: 50, color: 'orange' },
+    { x: 600, y: 600, radius: 50, color: 'yellow' },
+    { x: 700, y: 700, radius: 50, color: 'pink' },
+    { x: 150, y: 250, radius: 50, color: 'brown' },
+    { x: 250, y: 350, radius: 50, color: 'grey' },
+    { x: 350, y: 450, radius: 50, color: 'cyan' },
+    { x: 450, y: 550, radius: 50, color: 'magenta' },
+    { x: 550, y: 650, radius: 50, color: 'lime' },
+    { x: 650, y: 150, radius: 50, color: 'navy' },
+    { x: 750, y: 250, radius: 50, color: 'teal' },
+    { x: 100, y: 600, radius: 50, color: 'gold' },
+    { x: 200, y: 700, radius: 50, color: 'indigo' },
+    { x: 300, y: 150, radius: 50, color: 'violet' }
+];
+
+// Función para dibujar los círculos
+function drawCircles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpiar canvas
+    circles.forEach(circle => {
+        ctx.beginPath();
+        ctx.arc(circle.x, circle.y, circle.radius, 0, Math.PI * 2);
+        ctx.fillStyle = circle.color;
+        ctx.fill();
+        ctx.closePath();
+    });
+}
+
+drawCircles();
+
+// Función para detectar si el ratón está sobre un círculo
+function isMouseInCircle(mouseX, mouseY, circle) {
+    const dx = mouseX - circle.x;
+    const dy = mouseY - circle.y;
+    return dx * dx + dy * dy <= circle.radius * circle.radius;
+}
+
+// Event listener para manejar clics en el canvas
+canvas.addEventListener('click', (event) => {
+    // Obtiene las coordenadas del ratón respecto al canvas
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+
+    // Verifica en cuál círculo se hizo clic
+    circles.forEach((circle, index) => {
+        if (isMouseInCircle(mouseX, mouseY, circle)) {
+            input.value = `Círculo ${index + 1}`;  // Muestra el índice del círculo clickeado
+        }
+    });
+});
+
+// Event listener para cambiar el cursor cuando el ratón se mueve
+canvas.addEventListener('mousemove', (event) => {
+    // Obtiene las coordenadas del ratón respecto al canvas
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+
+    // Verifica si el ratón está sobre algún círculo
+    let overCircle = false;
+    circles.forEach((circle) => {
+        if (isMouseInCircle(mouseX, mouseY, circle)) {
+            overCircle = true;
+        }
+    });
+
+    if (overCircle) {
+        canvas.style.cursor = 'pointer';  // Cambia el cursor a puntero
+    } else {
+        canvas.style.cursor = 'default';  // Cambia el cursor a por defecto
+    }
+});
+
+    </script>
+</body>
+</html>
