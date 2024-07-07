@@ -87,11 +87,12 @@ canvas.addEventListener('mousemove', (event) => {
 
     // Verifica si el ratón está sobre algún círculo
     let overCircle = false;
-    circles.forEach((circle) => {
-        if (isMouseInCircle(mouseX, mouseY, circle)) {
+    for (let i = 0; i < circles.length; i++) {
+        if (isMouseInCircle(mouseX, mouseY, circles[i])) {
             overCircle = true;
+            break; // Sale del bucle al detectar que el cursor está sobre un círculo
         }
-    });
+    }
 
     if (overCircle) {
         canvas.style.cursor = 'pointer';  // Cambia el cursor a puntero

@@ -39,11 +39,12 @@ var h_th_bottom = document.getElementById('thb_bottom')
 var h_th_width = document.getElementById('thb_width')
 var h_th_height = document.getElementById('thb_height')
 
-var handleRadius = 20
+var handleRadius = 25
 
 var dragTL = dragBL = dragTR = dragBR = false;
 var dragTop = dragLeft = dragRight = dragBottom = false;
 var dragWholeRect = false;
+var isMouseClick = false;
 
 var rect={}
 var rectsArray = [];
@@ -92,7 +93,7 @@ function drawCircle(x, y, radius) {
 }
 
 function drawHandles() {
-  var radio = handleRadius / 3;
+  var radio = 5;
   drawCircle(rect.left, rect.top, radio);
   drawCircle(rect.left + rect.width, rect.top, radio);
   drawCircle(rect.left + rect.width, rect.top + rect.height, radio);
@@ -128,7 +129,7 @@ function mouseUp(e) {
   dragTop = dragLeft = dragRight = dragBottom = false;
   dragWholeRect = false;
   canvas.style.cursor = 'default'; 
-
+  isMouseClick = false;
 }
 
 //mousedown connected functions -- START
@@ -157,7 +158,7 @@ function getMousePos(canvas, evt) {
 }
 
 function mouseDown(e) {
-  console.log(rect);
+  isMouseClick = true;
   var pos = getMousePos(this,e);
   mouseX = pos.x;
   mouseY = pos.y;
@@ -210,58 +211,63 @@ function mouseDown(e) {
 
 
 function mouseMoveCursors(e) {
-  var pos = getMousePos(this,e);
-  mouseX = pos.x;
-  mouseY = pos.y;
-  // 0. inside movable rectangle
-  if (checkInRect(mouseX, mouseY, rect)){
-    if(!dragWholeRect)
-    canvas.style.cursor = 'move'; 
-  }
-  // 1. top left
-  else if (checkCloseEnough(mouseX, rect.left) && checkCloseEnough(mouseY, rect.top)) {
-      
-    canvas.style.cursor = 'nw-resize'; 
-  }
-  // 2. top right
-  else if (checkCloseEnough(mouseX, rect.left + rect.width) && checkCloseEnough(mouseY, rect.top)) {
-      
-    canvas.style.cursor = 'ne-resize'; 
-  }
-  // 3. bottom left
-  else if (checkCloseEnough(mouseX, rect.left) && checkCloseEnough(mouseY, rect.top + rect.height)) {
-    canvas.style.cursor = 'sw-resize'; 
-    
-  }
-  // 4. bottom right
-  else if (checkCloseEnough(mouseX, rect.left + rect.width) && checkCloseEnough(mouseY, rect.top + rect.height)) {
-    canvas.style.cursor = 'se-resize'; 
-      
-  }
-  // 5. top
-  else if (checkCloseEnough(mouseX, rect.left + (rect.width/2)) && checkCloseEnough(mouseY, rect.top)) {
-    canvas.style.cursor = 'n-resize'; 
-  }
-  // 6. right
-  else if (checkCloseEnough(mouseX, rect.left + rect.width) && checkCloseEnough(mouseY, rect.top + (rect.height/2))) {
-    canvas.style.cursor = 'e-resize'; 
+  console.log("over")
+  if(!isMouseClick)
+  {
 
-  }
-  // 7. left
-  else if (checkCloseEnough(mouseX, rect.left) && checkCloseEnough(mouseY, rect.top + (rect.height/2))) {
-    canvas.style.cursor = 'w-resize'; 
-  }
-  // 8. bottom
-  else if (checkCloseEnough(mouseX, rect.left + (rect.width/2)) && checkCloseEnough(mouseY, rect.top + rect.height)) {
-    canvas.style.cursor = 's-resize'; 
+    var pos = getMousePos(this,e);
+    mouseX = pos.x;
+    mouseY = pos.y;
+    // 0. inside movable rectangle
+    if (checkInRect(mouseX, mouseY, rect)){
+      if(!dragWholeRect)
+      canvas.style.cursor = 'move'; 
+    }
+    // 1. top left
+    else if (checkCloseEnough(mouseX, rect.left) && checkCloseEnough(mouseY, rect.top)) {
+        
+      canvas.style.cursor = 'nw-resize'; 
+    }
+    // 2. top right
+    else if (checkCloseEnough(mouseX, rect.left + rect.width) && checkCloseEnough(mouseY, rect.top)) {
+        
+      canvas.style.cursor = 'ne-resize'; 
+    }
+    // 3. bottom left
+    else if (checkCloseEnough(mouseX, rect.left) && checkCloseEnough(mouseY, rect.top + rect.height)) {
+      canvas.style.cursor = 'sw-resize'; 
+      
+    }
+    // 4. bottom right
+    else if (checkCloseEnough(mouseX, rect.left + rect.width) && checkCloseEnough(mouseY, rect.top + rect.height)) {
+      canvas.style.cursor = 'se-resize'; 
+        
+    }
+    // 5. top
+    else if (checkCloseEnough(mouseX, rect.left + (rect.width/2)) && checkCloseEnough(mouseY, rect.top)) {
+      canvas.style.cursor = 'n-resize'; 
+    }
+    // 6. right
+    else if (checkCloseEnough(mouseX, rect.left + rect.width) && checkCloseEnough(mouseY, rect.top + (rect.height/2))) {
+      canvas.style.cursor = 'e-resize'; 
 
+    }
+    // 7. left
+    else if (checkCloseEnough(mouseX, rect.left) && checkCloseEnough(mouseY, rect.top + (rect.height/2))) {
+      canvas.style.cursor = 'w-resize'; 
+    }
+    // 8. bottom
+    else if (checkCloseEnough(mouseX, rect.left + (rect.width/2)) && checkCloseEnough(mouseY, rect.top + rect.height)) {
+      canvas.style.cursor = 's-resize'; 
+
+    }
+    // (9.) none of them
+    else {
+        // handle not resizing
+        canvas.style.cursor = 'default'; 
+    }
   }
-  // (9.) none of them
-  else {
-      // handle not resizing
-      canvas.style.cursor = 'default'; 
-  }
-  drawRectInCanvas();
+  
 }
 //mousedown connected functions -- END
 
@@ -385,11 +391,33 @@ function initRect(){
   rect.left = th_left*ratio_w+60
 }
 
+// Función de throttling
+function throttle(func, limit) {
+    let lastFunc;
+    let lastRan;
+    return function() {
+        const context = this;
+        const args = arguments;
+        if (!lastRan) {
+            func.apply(context, args);
+            lastRan = Date.now();
+        } else {
+            clearTimeout(lastFunc);
+            lastFunc = setTimeout(function() {
+                if ((Date.now() - lastRan) >= limit) {
+                    func.apply(context, args);
+                    lastRan = Date.now();
+                }
+            }, limit - (Date.now() - lastRan));
+        }
+    };
+}
+
 function init(){
   canvas.addEventListener('mousedown', mouseDown, false);
   canvas.addEventListener('mouseup', mouseUp, false);
   canvas.addEventListener('mousemove', mouseMove, false);
-  canvas.addEventListener('mousemove', mouseMoveCursors, false);
+  canvas.addEventListener('mousemove', throttle(mouseMoveCursors, 200));
   canvas.addEventListener('touchstart', mouseDown);
   canvas.addEventListener('touchmove', mouseMove);
   canvas.addEventListener('touchend', mouseUp);
