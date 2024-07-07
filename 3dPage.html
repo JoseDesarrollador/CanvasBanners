@@ -17,6 +17,13 @@
         // Crear la escena
         var scene = new THREE.Scene();
 
+        // Cargar la textura de fondo
+           var textureLoader = new THREE.TextureLoader();
+        textureLoader.load('img/denim.webp', function (texture) {
+            scene.background = texture;
+        });
+
+
         // Crear la cámara
         var camera = new THREE.PerspectiveCamera(25, window.innerWidth / window.innerHeight, 0.1, 1000);
 
@@ -26,9 +33,14 @@
         document.body.appendChild(renderer.domElement);
 
         // Agregar una luz
-        var light = new THREE.DirectionalLight(0xffffff, 2500);
+        var light = new THREE.DirectionalLight(0xffffff, 1000);
         light.position.set(5, 10, 7.5);
         scene.add(light);
+
+        // Agregar una luz tenue debajo del modelo
+        var pointLight = new THREE.PointLight(0xffffff, 500);
+        pointLight.position.set(0, -2, 0); // Ajusta la posición de la luz debajo del modelo
+        scene.add(pointLight);
 
         // Crear los controles de órbita
         var controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -39,6 +51,9 @@
             var model = gltf.scene;
             scene.add(model);
             model.position.set(0, 0, 0); // Ajusta la posición del modelo si es necesario
+            
+            // Rotar el modelo 15 grados en el eje Y (0.2618 radianes)
+            model.rotation.y = THREE.Math.degToRad(25);
 
             // Animación y renderizado
             function animate() {
