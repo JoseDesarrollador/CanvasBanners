@@ -18,7 +18,7 @@
         var scene = new THREE.Scene();
 
         // Cargar la textura de fondo
-           var textureLoader = new THREE.TextureLoader();
+        var textureLoader = new THREE.TextureLoader();
         textureLoader.load('img/denim.webp', function (texture) {
             scene.background = texture;
         });
@@ -44,6 +44,11 @@
 
         // Crear los controles de órbita
         var controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enabled = false; // Desactivar controles inicialmente
+
+        // Crear el raycaster y el vector del mouse
+        var raycaster = new THREE.Raycaster();
+        var mouse = new THREE.Vector2();
 
         // Cargar el modelo GLTF
         var loader = new THREE.GLTFLoader();
@@ -51,9 +56,32 @@
             var model = gltf.scene;
             scene.add(model);
             model.position.set(0, 0, 0); // Ajusta la posición del modelo si es necesario
-            
+
             // Rotar el modelo 15 grados en el eje Y (0.2618 radianes)
             model.rotation.y = THREE.Math.degToRad(25);
+
+            // Evento para detectar clic en el modelo
+            function onDocumentMouseDown(event) {
+                event.preventDefault();
+
+                // Calcula la posición del mouse en coordenadas normalizadas del dispositivo (-1 a +1)
+                mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+                // Actualiza el raycaster con la cámara y la posición del mouse
+                raycaster.setFromCamera(mouse, camera);
+
+                // Calcula los objetos que intersectan el rayo
+                var intersects = raycaster.intersectObject(model, true);
+
+                if (intersects.length > 0) {
+                    controls.enabled = true; // Habilita los controles de órbita si se hace clic en el modelo
+                } else {
+                    controls.enabled = false; // Desactiva los controles de órbita si se hace clic fuera del modelo
+                }
+            }
+
+            document.addEventListener('mousedown', onDocumentMouseDown, false);
 
             // Animación y renderizado
             function animate() {
