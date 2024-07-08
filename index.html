@@ -93,17 +93,51 @@ function drawCircle(x, y, radius) {
 }
 
 function drawHandles() {
-  var radio = 5;
-  drawCircle(rect.left, rect.top, radio);
-  drawCircle(rect.left + rect.width, rect.top, radio);
-  drawCircle(rect.left + rect.width, rect.top + rect.height, radio);
-  drawCircle(rect.left, rect.top + rect.height, radio);
+  if(!isMouseClick || dragWholeRect)
+  {
+    var radio = 5;
+    drawCircle(rect.left, rect.top, radio);
+    drawCircle(rect.left + rect.width, rect.top, radio);
+    drawCircle(rect.left + rect.width, rect.top + rect.height, radio);
+    drawCircle(rect.left, rect.top + rect.height, radio);
 
-  drawCircle(rect.left + (rect.width / 2), rect.top, radio);
-  drawCircle(rect.left + (rect.width / 2), rect.top + rect.height, radio);
+    drawCircle(rect.left + (rect.width / 2), rect.top, radio);
+    drawCircle(rect.left + (rect.width / 2), rect.top + rect.height, radio);
 
-  drawCircle(rect.left, rect.top + (rect.height/2), radio);
-  drawCircle(rect.left+rect.width, rect.top + (rect.height/2), radio);
+    drawCircle(rect.left, rect.top + (rect.height/2), radio);
+    drawCircle(rect.left+rect.width, rect.top + (rect.height/2), radio);
+
+  }
+  
+
+  var radioDragging = 10;
+
+  if (dragTL) {
+    // Acción cuando dragTL es true
+    drawCircle(rect.left, rect.top, radioDragging);
+  } else if (dragBL) {
+    // Acción cuando dragBL es true
+    drawCircle(rect.left, rect.top + rect.height, radioDragging);
+  } else if (dragTR) {
+    drawCircle(rect.left + rect.width, rect.top, radioDragging);
+    // Acción cuando dragTR es true
+} else if (dragBR) {
+    // Acción cuando dragBR es true
+    drawCircle(rect.left + rect.width, rect.top + rect.height, radioDragging);
+  } else if (dragTop) {
+    // Acción cuando dragTop es true
+    drawCircle(rect.left + (rect.width / 2), rect.top, radioDragging);
+  } else if (dragLeft) {
+    // Acción cuando dragLeft es true
+    drawCircle(rect.left, rect.top + (rect.height/2), radioDragging);
+  } else if (dragRight) {
+    // Acción cuando dragRight es true
+    drawCircle(rect.left+rect.width, rect.top + (rect.height/2), radioDragging);
+  } else if (dragBottom) {
+    // Acción cuando dragBottom es true
+    drawCircle(rect.left + (rect.width / 2), rect.top + rect.height, radioDragging);
+  } 
+
 
 }
 
@@ -158,13 +192,12 @@ function getMousePos(canvas, evt) {
 }
 
 function mouseDown(e) {
-  isMouseClick = true;
   var pos = getMousePos(this,e);
   mouseX = pos.x;
   mouseY = pos.y;
   // 0. inside movable rectangle
   if (checkInRect(mouseX, mouseY, rect)){
-      dragWholeRect=true;
+      dragWholeRect = isMouseClick = true;
       startX = mouseX;
       startY = mouseY;
     canvas.style.cursor = 'grabbing'; 
@@ -172,35 +205,35 @@ function mouseDown(e) {
   }
   // 1. top left
   else if (checkCloseEnough(mouseX, rect.left) && checkCloseEnough(mouseY, rect.top)) {
-      dragTL = true;
+      dragTL = isMouseClick = true;
   }
   // 2. top right
   else if (checkCloseEnough(mouseX, rect.left + rect.width) && checkCloseEnough(mouseY, rect.top)) {
-      dragTR = true;
+      dragTR = isMouseClick = true;
   }
   // 3. bottom left
   else if (checkCloseEnough(mouseX, rect.left) && checkCloseEnough(mouseY, rect.top + rect.height)) {
-      dragBL = true;
+      dragBL = isMouseClick = true;
   }
   // 4. bottom right
   else if (checkCloseEnough(mouseX, rect.left + rect.width) && checkCloseEnough(mouseY, rect.top + rect.height)) {
-      dragBR = true;
+      dragBR = isMouseClick = true;
   }  
   // 5. top
   else if (checkCloseEnough(mouseX, rect.left + (rect.width/2)) && checkCloseEnough(mouseY, rect.top)) {
-      dragTop = true;
+      dragTop = isMouseClick = true;
   }
   // 6. right
   else if (checkCloseEnough(mouseX, rect.left + rect.width) && checkCloseEnough(mouseY, rect.top + (rect.height/2))) {
-      dragRight = true;
+      dragRight = isMouseClick = true;
   }
   // 7. left
   else if (checkCloseEnough(mouseX, rect.left) && checkCloseEnough(mouseY, rect.top + (rect.height/2))) {
-      dragLeft = true;
+      dragLeft = isMouseClick = true;
   }
   // 8. bottom
   else if (checkCloseEnough(mouseX, rect.left + (rect.width/2)) && checkCloseEnough(mouseY, rect.top + rect.height)) {
-      dragBottom = true;
+      dragBottom = isMouseClick = true;
   }
   // (9.) none of them
   else {
@@ -211,7 +244,6 @@ function mouseDown(e) {
 
 
 function mouseMoveCursors(e) {
-  console.log("over")
   if(!isMouseClick)
   {
 
@@ -418,6 +450,7 @@ function init(){
   canvas.addEventListener('mouseup', mouseUp, false);
   canvas.addEventListener('mousemove', mouseMove, false);
   canvas.addEventListener('mousemove', throttle(mouseMoveCursors, 200));
+  // canvas.addEventListener('mousemove', mouseMoveCursors);
   canvas.addEventListener('touchstart', mouseDown);
   canvas.addEventListener('touchmove', mouseMove);
   canvas.addEventListener('touchend', mouseUp);
