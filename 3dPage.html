@@ -20,6 +20,10 @@
         // Cargar la textura de fondo
         var textureLoader = new THREE.TextureLoader();
         textureLoader.load('img/denim.webp', function (texture) {
+            texture.wrapS = THREE.RepeatWrapping;
+            texture.wrapT = THREE.RepeatWrapping;
+            texture.repeat.set(15, 15); // Ajustar los valores de repetición para disminuir el tamaño del pattern
+            
             scene.background = texture;
         });
 
