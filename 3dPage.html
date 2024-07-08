@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Three.js GLTF with OrbitControls</title>
+    <title>Three.js GLTF with Shape Keys</title>
     <style>
         body { margin: 0; }
         canvas { display: block; }
@@ -16,7 +16,7 @@
     <script>
         // Crear la escena
         var scene = new THREE.Scene();
-
+        
         // Cargar la textura de fondo
         var textureLoader = new THREE.TextureLoader();
         textureLoader.load('img/denim.webp', function (texture) {
@@ -64,6 +64,17 @@
             // Rotar el modelo 15 grados en el eje Y (0.2618 radianes)
             model.rotation.y = THREE.Math.degToRad(25);
 
+             // Verificar la carga de los morph targets
+             model.traverse(function (child) {
+                if (child.isMesh) {
+                    console.log('Mesh:', child.name);
+                    console.log('Morph Target Influences:', child.morphTargetInfluences);
+                    if (child.morphTargetDictionary) {
+                        console.log('Morph Target Dictionary:', child.morphTargetDictionary);
+                    }
+                }
+            });
+
             // Evento para detectar clic en el modelo
             function onDocumentMouseDown(event) {
                 event.preventDefault();
@@ -87,11 +98,40 @@
 
             document.addEventListener('mousedown', onDocumentMouseDown, false);
 
+
+            // Animar los shape keys (morph targets)
+            var morphTargetIndex = 1; // Suponiendo que el segundo shape key es para los ojos cerrados
+            var morphTargetValue = 0;
+            var increasing = true;
+
+            function animateMorphTargets() {
+                if (increasing) {
+                    morphTargetValue += 0.01;
+                    if (morphTargetValue >= 1) {
+                        morphTargetValue = 1;
+                        increasing = false;
+                    }
+                } else {
+                    morphTargetValue -= 0.01;
+                    if (morphTargetValue <= 0) {
+                        morphTargetValue = 0;
+                        increasing = true;
+                    }
+                }
+                model.traverse(function (child) {
+                    if (child.isMesh && child.morphTargetInfluences) {
+                        child.morphTargetInfluences[morphTargetIndex] = morphTargetValue;
+                    }
+                });
+            }
+
             // Animación y renderizado
             function animate() {
                 requestAnimationFrame(animate);
 
-                controls.update(); // Actualiza los controles de órbita
+                controls.update();
+
+                animateMorphTargets();
 
                 renderer.render(scene, camera);
             }
